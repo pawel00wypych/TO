@@ -14,9 +14,10 @@ public class ClientTask implements IShippableTask<Void>, Runnable {
 	@Override
 	public void run() {
 		try {
+			ShippableTaskFactory factory = new ShippableTaskFactory();
 			Socket socket = new Socket("localhost", TcpServer.PORT);
 			ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-			out.writeObject(new ShippableTask(state));
+			out.writeObject(factory.createTask(state));
 			out.flush();
 			ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
 			Integer result = (Integer) in.readObject();

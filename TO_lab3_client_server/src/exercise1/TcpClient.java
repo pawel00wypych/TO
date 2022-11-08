@@ -9,9 +9,9 @@ public class TcpClient implements IShippableTask<Void> {
    
     void fire() {
 	ExecutorService executor = Executors.newFixedThreadPool(POOL_SIZE);
-	
+	ClientTaskFactory factory = new ClientTaskFactory();
 	for ( int i = 0; i < RUNS; i++ ) {
-	    executor.execute(new ClientTask(i));
+	    executor.execute(factory.createTask(i));
 	}
 	
 	executor.shutdown();

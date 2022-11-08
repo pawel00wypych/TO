@@ -32,8 +32,9 @@ public class TcpServer implements IShippableTask<Void>{
     @Override
     public Void execute() throws IOException {
         System.out.println(this + " up and running");
+        ServerTaskFactory factory = new ServerTaskFactory();
         while ( true ) {
-            executor.execute(new ServerTask(ss.accept()));
+            executor.execute(factory.createTask(ss.accept()));
         }
     }
 }
