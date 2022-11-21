@@ -26,7 +26,7 @@ class Application {
         {
             String inputLine = scanner.nextLine();
 
-            String parts[] = inputLine.split(" ",2);
+            String[] parts = inputLine.split(" ",2);
 
             String method = parts[0];
 
@@ -77,6 +77,9 @@ class Application {
 
 class Editor {
     private List<Square> squares = new ArrayList<>();
+
+    private List<Square> overwrittenSquares = new ArrayList<>();
+
     private CommandHistory history;
 
     public Editor(CommandHistory history) {
@@ -104,10 +107,27 @@ class Editor {
         for (int i = 0; i < squares.size(); i++ ) {
             if(squares.get(i).getIdNumber() == square.getIdNumber())
             {
+                overwrittenSquares.add(squares.get(i));
                 squares.set(i, square);
                 break;
             }
         }
+    }
+
+    public Square getOverwrittenSquare(int id) {
+        if(overwrittenSquares.size() > 0)
+        {
+            for (int i = overwrittenSquares.size() - 1; i >= 0; i-- ) {
+                if(overwrittenSquares.get(i).getIdNumber() == id)
+                {
+                    Square temp = overwrittenSquares.get(i);
+                    overwrittenSquares.remove(i);
+
+                    return temp;
+                }
+            }
+        }
+        return null;
     }
 
     public void removeSquare(int id) {
@@ -189,7 +209,7 @@ class CommandCreate extends Command{
 
         this.method = method;
 
-        String paramsArray[] = params.split(" ");
+        String[] paramsArray = params.split(" ");
 
         squareID = Integer.parseInt(paramsArray[0]);
 
@@ -217,7 +237,7 @@ class CommandCreate extends Command{
     }
 
     public void setSquareID(int squareID) {
-        squareID = squareID;
+        this.squareID = squareID;
     }
 
     public int getSideLength() {
@@ -233,20 +253,19 @@ class CommandCreate extends Command{
     }
 
     public String getSquareIDtoString() {
-        return new String(String.valueOf(squareID));
+        return String.valueOf(squareID);
     }
 
     public String getSideLengthToString() {
-        return new String(String.valueOf(sideLength));
+        return String.valueOf(sideLength);
     }
 
 }
 
 class CommandPrint extends Command{
-    private List<Square> squares = new ArrayList<>();
     @Override
     public void execute(String params, Editor editor, String method) {
-        squares = editor.getSquares();
+        List<Square> squares = editor.getSquares();
 
         Collections.sort(squares);
 
@@ -270,7 +289,7 @@ class CommandMove extends Command{
 
         this.method = method;
 
-        String paramsArray[] = params.split(" ");
+        String[] paramsArray = params.split(" ");
 
         squareID = Integer.parseInt(paramsArray[0]);
 
@@ -296,15 +315,15 @@ class CommandMove extends Command{
     }
 
     public String getX() {
-        return new String(String.valueOf(x));
+        return String.valueOf(x);
     }
 
     public String getY() {
-        return new String(String.valueOf(y));
+        return String.valueOf(y);
     }
 
     public String getSquareID() {
-        return new String(String.valueOf(squareID));
+        return String.valueOf(squareID);
     }
 }
 
@@ -320,7 +339,7 @@ class CommandScale extends Command{
 
         this.method = method;
 
-        String paramsArray[] = params.split(" ");
+        String[] paramsArray = params.split(" ");
 
         squareID = Integer.parseInt(paramsArray[0]);
 
@@ -341,11 +360,11 @@ class CommandScale extends Command{
     }
 
     public String getScale() {
-        return new String(String.valueOf(scale));
+        return String.valueOf(scale);
     }
 
     public String getSquareID() {
-        return new String(String.valueOf(squareID));
+        return String.valueOf(squareID);
     }
 }
 
@@ -419,11 +438,18 @@ class CommandUndoC extends Command {
 
         this.method = method;
 
-        String paramsArray[] = params.split(" ");
+        String[] paramsArray = params.split(" ");
 
         int id = Integer.parseInt(paramsArray[0]);
 
+        Square tmp = editor.getOverwrittenSquare(id);
+
         editor.removeSquare(id);
+        if(tmp != null)
+        {
+            editor.addSquare(tmp);
+        }
+
     }
 }
 
@@ -435,7 +461,7 @@ class CommandUndoM extends Command {
 
         this.method = method;
 
-        String paramsArray[] = params.split(" ");
+        String[] paramsArray = params.split(" ");
 
         int id = Integer.parseInt(paramsArray[0]);
 
@@ -460,7 +486,7 @@ class CommandUndoS extends Command {
 
         this.method = method;
 
-        String paramsArray[] = params.split(" ");
+        String[] paramsArray = params.split(" ");
 
         int id = Integer.parseInt(paramsArray[0]);
 
