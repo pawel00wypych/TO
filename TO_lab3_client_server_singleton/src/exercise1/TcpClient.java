@@ -17,6 +17,7 @@ public class TcpClient {
         if (result != null) {
             return result;
         }
+
         synchronized(TcpClient.class) {
             if (instance == null) {
                 instance = new TcpClient();
